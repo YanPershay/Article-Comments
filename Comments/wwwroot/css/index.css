@@ -1,0 +1,32 @@
+﻿#title {
+    font-size: 30px;
+}
+
+#article{
+    font-family:Consolas;
+}
+
+#comments-title{
+    padding: 10px 10px 10px 0%;
+    font-size: 25px;
+}
+
+#comment-head {
+    padding: 10px;
+    background-color: lightgray;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#comment-text {
+    border: 2px solid lightgray;
+    padding: 10px;
+}
+
+#comment-footer {
+    padding: 10px;
+    background-color: lightgray;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+

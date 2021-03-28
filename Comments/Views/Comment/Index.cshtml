@@ -1,0 +1,233 @@
+﻿@{
+    ViewData["Title"] = "Fullstack";
+}
+
+<div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <link type="text/css" rel="stylesheet" href="~/css/index.css"/>
+    <script>
+
+        $('#commentForm').on('submit', function (event) {
+        event.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            url: "@Url.Action("Index", "Comment")",
+            method: "POST",
+            data: formData,
+            dataType: "json",
+            success: function (data) {
+                if (data.error != '') {
+                    $('#commentForm')[0].reset();
+                    $('#commentMessage').html(data.error);
+                }
+            }
+        })
+        });
+
+        $(document).ready(function () {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetComments")",
+                dataType: "json",
+                data: {},
+                success: function (data) {
+
+                    $.each(data, function (i, item) {
+
+                        var repliedTo = '';
+                        if (item.parentCommentId != 0) {
+
+                            var reply = $.grep(data, function (v) {
+                                return v.id == item.parentCommentId;
+                            });
+
+                            repliedTo = ' replies to ' + reply[0].author;
+
+                        }
+
+                        var date = new Date(item.commentDate),
+                            dformat = ("00" + (date.getMonth() + 1)).slice(-2) + "/" +
+                                ("00" + date.getDate()).slice(-2) + "/" +
+                                date.getFullYear() + " " +
+                                ("00" + date.getHours()).slice(-2) + ":" +
+                                ("00" + date.getMinutes()).slice(-2) + ":" +
+                                ("00" + date.getSeconds()).slice(-2);
+
+                        var rows = '<div class="panel panel-default">' +
+                            '<div>' +
+                            '<div class="panel-heading" id="comment-head"> ' +
+                            'By <b>' + item.author + '</b> on <i>' + dformat + '</i>' + repliedTo + '</div>' +
+                                '<div class="panel-body" id="comment-text">' + item.commentText + '</div>' +
+                                '<div class="panel-footer" id="comment-footer" align="right">' +
+                                '<button type="button" class="btn btn-success reply" id="' + item.id + '">' +
+                                'Reply</button></div>' +
+                                '</div><br/></div>';
+
+                        //rows = getReplyComment({ data: data, parentCommentId: item.id });
+
+                        $('#comments-div #comment').append(rows);
+                    });
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                }
+            });
+            return false;
+        });
+
+        $(document).on('click', '.reply', function () {
+
+            var commentId = $(this).attr("id");
+            $('#parentCommentId').val(commentId);
+            $('#author').focus();
+
+        });
+
+        //Attempts to make a comment tree system(using recursion)
+        function getReplyComment(data, parentCommentId = 0, marginLeft=0) {
+
+            $.each(data, function (i, item) {
+
+                if (parentCommentId == 0) {
+                    marginLeft = 0;
+                }
+                else {
+                    marginLeft += 48;
+                }
+
+                if (data != null) {
+                    $.each(data, function (i, item) {
+                        var rows = '<div class="panel panel-default" style="margin-left:' + marginLeft + 'px">' +
+                            '<div class="panel-heading"> ' +
+                            'By <b>' + item.author + '</b> on <i>' + item.commentDate + '</i></div>' +
+                            '<div class="panel-body">' + item.commentText + '</div>' +
+                            '<div class="panel-footer" align="right">' +
+                            '<button type="button" class="btn btn-success reply" id="' + item.id + '">' +
+                            'Reply</button></div>' +
+                            '</div>';
+
+                        rows = getReplyComment(data, item.id, marginLeft);
+                    });
+                }
+            });
+
+            return rows;
+        }
+    </script>
+</div>
+
+<div class="container">
+    <div class="article" id="article">
+        <b id="title">Who is fullstack Developer?</b>
+        <div class="border-bottom">
+            <p>
+                A full stack web developer is a person who can develop both client and server software.
+            </p>
+            <p>
+                In addition to mastering HTML and CSS, he/she also knows how to:
+            </p>
+            <ul>
+                <li>Program a <b>browser</b> (like using JavaScript, jQuery, Angular, or Vue)</li>
+                <li>Program a <b>server</b> (like using PHP, ASP, Python, or Node)</li>
+                <li>Program a <b>database</b> (like using SQL, SQLite, or MongoDB)</li>
+            </ul>
+        </div>
+        <br />
+        <div class="row border-bottom">
+            <div class="col">
+                Client Software (Front End)
+                <ul>
+                    <li>HTML       </li>
+                    <li>CSS        </li>
+                    <li>Bootstrap  </li>
+                    <li>W3.CSS     </li>
+                    <li>JavaScript </li>
+                    <li>ES5        </li>
+                    <li>HTML DOM   </li>
+                    <li>JSON       </li>
+                    <li>XML        </li>
+                    <li>jQuery     </li>
+                    <li>Angular    </li>
+                    <li>React      </li>
+                    <li>Backbone.js</li>
+                    <li>Ember.js   </li>
+                    <li>Redux      </li>
+                    <li>Storybook  </li>
+                    <li>GraphQL    </li>
+                    <li>Meteor.js  </li>
+                    <li>Grunt      </li>
+                    <li>Gulp       </li>
+                </ul>
+            </div>
+            <div class="col">
+                Server Software (Back End)
+                <ul>
+                    <li>PHP                    </li>
+                    <li>ASP                    </li>
+                    <li>C++                    </li>
+                    <li>C#                     </li>
+                    <li>Java                   </li>
+                    <li>Python                 </li>
+                    <li>Node.js                </li>
+                    <li>Express.js             </li>
+                    <li>Ruby                   </li>
+                    <li>REST                   </li>
+                    <li>GO                     </li>
+                    <li>SQL                    </li>
+                    <li>MongoDB                </li>
+                    <li>Firebase.com           </li>
+                    <li>Sass                   </li>
+                    <li>Less                   </li>
+                    <li>Parse.com              </li>
+                    <li>PaaS (Azure and Heroku)</li>
+                </ul>
+            </div>
+        </div>
+        <br />
+        <div class="border-bottom">
+            <p>The advantage of being a full stack web developer is:</p>
+            <ul>
+                <li>You can master all the techniques involved in a development project        </li>
+                <li>You can make a prototype very rapidly                                      </li>
+                <li>You can provide help to all the team members                               </li>
+                <li>You can reduce the cost of the project                                     </li>
+                <li>You can reduce the time used for team communication                        </li>
+                <li>You can switch between front and back end development based on requirements</li>
+                <li>You can better understand all aspects of new and upcoming technologies     </li>
+            </ul>
+            <p>Disadvantages</p>
+            <ul>
+                <li>The solution chosen can be wrong for the project        </li>
+                <li>The solution chosen can be dependent on developer skills</li>
+                <li>The solution can generate a key person risk             </li>
+                <li>Being a full stack developer is increasingly complex    </li>
+            </ul>
+        </div>
+    </div>
+    <div id="comments-title">
+        <b>Comments</b>
+    </div>
+    <form method="post" id="commentForm">
+        <div class="form-group">
+            <input type="text" name="author" id="author" class="form-control" placeholder="Enter name" />
+        </div>
+        <div class="form-group">
+            <textarea name="commentText" id="commentText" class="form-control" placeholder="Enter comment" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <input type="hidden" name="parentCommentId" id="parentCommentId" value="0" />
+            <input type="submit" name="submit" id="submit" class="btn btn-info" value="Comment" />
+        </div>
+    </form>
+    <span id="commentMessage"></span>
+    <br />
+    <div id="displayComment"></div>
+    <div id="comments-div" class="comments-div">
+        <div id="comment" class="comment">
+        </div>
+    </div>
+</div>
+
